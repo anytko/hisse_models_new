@@ -11,6 +11,15 @@ source("_functions.R")
 source("_functions_additional.R")
 
 list(
+	tar_target(data_tree, get_data_tree_1011()),
+	tar_target(rarity_types, c("GR", "GL", "FR", "FL", "PL")),
+	tar_target(phy, data_tree$phy),
+	tar_target(traits, data_tree$trait),
+	
+	
+	
+	
+	
     tar_target(data_1011, get_data_tree_1011()),
     tar_target(gr_data_1011, gr_rarity_1011(data_1011$trait)),
     tar_target(gl_data_1011, gl_rarity_1011(data_1011$trait)),
