@@ -1,2 +1,2 @@
-source("_targets_streamlined.R")
+source("_targets.R")
 tar_make()
