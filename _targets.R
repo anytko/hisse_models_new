@@ -32,7 +32,8 @@ list(
 	tar_target(sample_f, 0.004044),
 	tar_target(
 		div_model_type,
-		c("CID_full", "HISSE_full", "CID_turnover_only", "HISSE_turnover_only")
+		#c("CID_full", "HISSE_full", "CID_turnover_only", "HISSE_turnover_only")
+		c("HISSE_turnover_only")
 	),
 	tar_target(trans_model_type, c("ARD", "ER")),
 	tar_target(
@@ -51,9 +52,7 @@ list(
 			div_model_type,
 			trans_model_type,
 			n_hidden_states,
-			sample_f,
-			traits,
-			phy
+			sample_f
 		)
 	)
 )
