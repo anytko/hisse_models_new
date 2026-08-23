@@ -58,7 +58,16 @@ do_single_hisse_run_univariate <- function(
 		)
 	}
 	
-	run_name = paste0("univariate_div_", div_model_type, "_trans_", trans_model_type, "_hidden_", n_hidden_states)
+	run_name <- paste0(
+		"univariate_div_",
+		div_model_type,
+		"_trans_",
+		trans_model_type,
+		"_hidden_",
+		n_hidden_states,
+		"_raritytype_",
+		rarity_type
+	)
 	
 	turnover_vector <- sequence(2 * n_hidden_states) # since binary trait
 	eps_vector <- sequence(2 * n_hidden_states)
