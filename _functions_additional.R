@@ -46,17 +46,25 @@ do_single_hisse_run_univariate <- function(
 	phy
 ) {
 	traits_binary <- convert_to_rarity_single_dimension(traits, rarity_type)
+	
+	n_hidden_states_transition <- n_hidden_states
+	
+	if (grepl("CID", div_model_type)) {
+		# we're going to run a CID model
+		n_hidden_states_transition <- 2 * n_hidden_states
+	}
 
 	transition_matrix <- hisse::TransMatMakerHiSSE(
-		hidden.traits = n_hidden_states - 1,
+		hidden.traits = n_hidden_states_transition - 1,
 		make.null = FALSE
 	)
 	if (trans_model_type == "ER") {
 		transition_matrix <- hisse::TransMatMakerHiSSE(
-			hidden.traits = n_hidden_states - 1,
+			hidden.traits = n_hidden_states_transition - 1,
 			make.null = TRUE
 		)
 	}
+	
 	
 	run_name <- paste0(
 		"univariate_div_",
@@ -73,14 +81,16 @@ do_single_hisse_run_univariate <- function(
 	eps_vector <- sequence(2 * n_hidden_states)
 	
 	if(grepl("CID", div_model_type)) { # we're going to run a CID model
-		turnover_vector <- rep(seq_len(2 * n_hidden_states), each = 2)
-		eps_vector <- rep(seq_len(2 * n_hidden_states), each = 2)
+		turnover_vector <- rep(seq_len(2*n_hidden_states), each = 2)
+		eps_vector <- rep(seq_len(2*n_hidden_states), each = 2)
 	}
 	
 	if(grepl("turnover_only", div_model_type)) {
 		eps_vector <- rep(1, length(eps_vector))
 	}
 
+	save(list=ls(), file=paste0("debug/", run_name, ".rda"))
+	
 	hisse_result <- hisse::hisse(
 		phy = phy,
 		data = traits_binary,

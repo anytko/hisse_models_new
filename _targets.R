@@ -28,12 +28,12 @@ list(
 	tar_target(rarity_type, c("GR", "GL", "FR", "FL", "PL")),
 	tar_target(phy, data_tree$phy),
 	tar_target(traits, data_tree$trait),
-	tar_target(n_hidden_states, 4), # can change this to allow more hidden states
+	tar_target(n_hidden_states, 2), # can change this to allow more hidden states
 	tar_target(sample_f, 0.004044),
 	tar_target(
 		div_model_type,
-		#c("CID_full", "HISSE_full", "CID_turnover_only", "HISSE_turnover_only")
-		c("HISSE_turnover_only")
+		c("CID_full", "HISSE_full", "CID_turnover_only", "HISSE_turnover_only")
+		#c("HISSE_turnover_only", "CID_turnover_only")
 	),
 	tar_target(trans_model_type, c("ARD", "ER")),
 	tar_target(
