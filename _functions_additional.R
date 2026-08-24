@@ -102,6 +102,26 @@ do_single_hisse_run_univariate <- function(
 		tip.fog = c(1, 1)
 	)
 	
+	try({
+		hisse_result_try_2 <- hisse::hisse(
+			phy = phy,
+			data = traits_binary,
+			trans.rate = transition_matrix,
+			turnover = turnover_vector,
+			eps = eps_vector,
+			hidden.states = TRUE,
+			f = rep(sample_f, 2),
+			tip.fog = c(1, 1),
+			restart.obj = hisse_result,
+			sann = FALSE
+		)
+		if(hisse_result_try_2$AICc < hisse_result$AICc) {
+			hisse_result <- hisse_result_try_2
+		}
+	})
+	
+	
+	
 	hisse_result$settings <- list(
 		rarity_type = rarity_type,
 		div_model_type = div_model_type,
