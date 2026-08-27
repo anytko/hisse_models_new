@@ -133,3 +133,115 @@ do_single_hisse_run_univariate <- function(
 	save(hisse_result, file=paste0("results/", run_name, ".rda"))
 	return(hisse_result)
 }
+
+get_rarity_pairs <- function(rarity_type) {
+	rarity_pairs <- list()
+	n_types <- length(rarity_type)
+	for (i in sequence(n_types)) {
+		for (j in sequence(n_types)) {
+			if (i<j) {
+				rarity_pairs <- append(rarity_pairs, c(rarity_type[i], rarity_type[j]))
+			}	
+		}	
+	}
+	return(rarity_pairs)
+}
+
+# hisse::MuHiSSE(phy = data$phy, data = gr_gl_data, trans.rate = trans.rate_ard_mu, turnover = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), eps = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), hidden.states = TRUE)
+
+do_single_muhisse_run_biivariate <- function(
+	rarity_pair,
+	div_model_type,
+	trans_model_type,
+	n_hidden_states_muhisse,
+	sample_f,
+	traits,
+	phy
+) {
+	traits_two <- convert_to_rarity_two_dimension(traits, rarity_pair[1], rarity_pair[2])
+
+	n_hidden_states_transition <- n_hidden_states_muhisse
+
+	if (grepl("CID", div_model_type)) {
+		# we're going to run a CID model
+		n_hidden_states_transition <- 2 * n_hidden_states_muhisse
+	}
+
+	transition_matrix <- hisse::TransMatMakerMuHiSSE(
+		hidden.traits = n_hidden_states_transition - 1,
+		make.null = FALSE
+	)
+	if (trans_model_type == "ER") {
+		transition_matrix <- hisse::TransMatMakerMuHiSSE(
+			hidden.traits = n_hidden_states_transition - 1,
+			make.null = TRUE
+		)
+	}
+
+	run_name <- paste0(
+		"bivariate_div_",
+		div_model_type,
+		"_trans_",
+		trans_model_type,
+		"_hidden_",
+		n_hidden_states_muhisse,
+		"_raritytype1_",
+		rarity_pair[1],
+		"_raritytype2_",
+		rarity_pair[2]
+	)
+
+	turnover_vector <- sequence(4 * n_hidden_states_muhisse) # since binary trait
+	eps_vector <- sequence(4 * n_hidden_states_muhisse)
+
+	if (grepl("CID", div_model_type)) {
+		# we're going to run a CID model
+		turnover_vector <- rep(seq_len(4 * n_hidden_states_muhisse), each = 2)
+		eps_vector <- rep(seq_len(4 * n_hidden_states_muhisse), each = 2)
+	}
+
+	if (grepl("turnover_only", div_model_type)) {
+		eps_vector <- rep(1, length(eps_vector))
+	}
+
+	save(list = ls(), file = paste0("debug/", run_name, ".rda"))
+
+	muhisse_result <- hisse::MuHiSSE(
+		phy = phy,
+		data = traits_two,
+		trans.rate = transition_matrix,
+		turnover = turnover_vector,
+		eps = eps_vector,
+		hidden.states = TRUE,
+		f = rep(sample_f, 4)
+	)
+
+	try({
+		muhisse_result_try_2 <- hisse::MuHiSSE(
+			phy = phy,
+			data = traits_two,
+			trans.rate = transition_matrix,
+			turnover = turnover_vector,
+			eps = eps_vector,
+			hidden.states = TRUE,
+			f = rep(sample_f, 4),
+			restart.obj = muhisse_result,
+			sann = FALSE
+		)
+		if (muhisse_result_try_2$AICc < muhisse_result$AICc) {
+			muhisse_result <- muhisse_result_try_2
+		}
+	})
+
+	muhisse_result$settings <- list(
+		rarity_type1 = rarity_pair[1],
+		rarity_type2 = rarity_pair[2],
+		div_model_type = div_model_type,
+		trans_model_type = trans_model_type,
+		n_hidden_states = n_hidden_states_muhisse,
+		run_name = run_name
+	)
+
+	save(muhisse_result, file = paste0("results/", run_name, ".rda"))
+	return(muhisse_result)
+}
