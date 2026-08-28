@@ -140,7 +140,7 @@ get_rarity_pairs <- function(rarity_type) {
 	for (i in sequence(n_types)) {
 		for (j in sequence(n_types)) {
 			if (i<j) {
-				rarity_pairs <- append(rarity_pairs, c(rarity_type[i], rarity_type[j]))
+				rarity_pairs[[length(rarity_pairs)+1]] <-  c(rarity_type[i], rarity_type[j])
 			}	
 		}	
 	}
@@ -148,6 +148,7 @@ get_rarity_pairs <- function(rarity_type) {
 }
 
 # hisse::MuHiSSE(phy = data$phy, data = gr_gl_data, trans.rate = trans.rate_ard_mu, turnover = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), eps = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), hidden.states = TRUE)
+
 
 do_single_muhisse_run_biivariate <- function(
 	rarity_pair,
@@ -158,7 +159,12 @@ do_single_muhisse_run_biivariate <- function(
 	traits,
 	phy
 ) {
-	traits_two <- convert_to_rarity_two_dimension(traits, rarity_pair[1], rarity_pair[2])
+	rarity_pair <- unlist(rarity_pair)
+	traits_two <- convert_to_rarity_two_dimension(
+		traits,
+		rarity_pair[1],
+		rarity_pair[2]
+	)
 
 	n_hidden_states_transition <- n_hidden_states_muhisse
 
@@ -196,7 +202,10 @@ do_single_muhisse_run_biivariate <- function(
 
 	if (grepl("CID", div_model_type)) {
 		# we're going to run a CID model
-		turnover_vector <- rep(seq_len(4 * n_hidden_states_muhisse), each = 2)
+		turnover_vector <- rep(
+			seq_len(4 * n_hidden_states_muhisse),
+			each = 2
+		)
 		eps_vector <- rep(seq_len(4 * n_hidden_states_muhisse), each = 2)
 	}
 
