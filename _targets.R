@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(crew)
 
-ncores_to_allocate <- max(1, floor(0.7 * parallel::detectCores()))
+ncores_to_allocate <- max(1, floor(0.4 * parallel::detectCores()))
 
 
 tar_option_set(
