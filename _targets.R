@@ -60,6 +60,12 @@ list(
 		name = rarity_pair,
 		command = get_rarity_pairs(rarity_type)
 	),
+
+	tar_target(
+		name = rarity_pair,
+		command = get_rarity_pairs(rarity_type)
+	),
+
 	tar_target(
 		name = bivariate_hisse_runs,
 		command = do_single_muhisse_run_biivariate(

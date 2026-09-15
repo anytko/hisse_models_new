@@ -213,6 +213,8 @@ do_single_muhisse_run_biivariate <- function(
 		eps_vector <- rep(1, length(eps_vector))
 	}
 
+	print(run_name)
+
 	save(list = ls(), file = paste0("debug/", run_name, ".rda"))
 
 	muhisse_result <- hisse::MuHiSSE(
